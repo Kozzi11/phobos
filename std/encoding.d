@@ -2031,10 +2031,20 @@ body
 
 unittest
 {
-    string dst = void;
-    Windows1252String src = cast(Windows1252String)[0xe8, 0xec, 0xfd, 0xf8, 0xe9, 0xe1, 0x99, 0x83, 0x8c, 0x9c, 0xdf, 0x80, 0xc6, 0xde];
-    transcode(src, dst);
-    assert(dst == "ìèøýáéƒ™œŒ€ßÞÆ");
+    string dstUtf8 = void;
+    Windows1252String dstWin1252 = void;
+    Latin1String dstLatin1 = void;
+
+    string srcUtf8 = "èìýøéá™ƒŒœß€ÆÞ";
+    string srcUtf8Latin1 = "©¤¥¦§©ÅÆðÐÞß¿×";
+    Windows1252String srcWin1252 = cast(Windows1252String)[0xe8, 0xec, 0xfd, 0xf8, 0xe9, 0xe1, 0x99, 0x83, 0x8c, 0x9c, 0xdf, 0x80, 0xc6, 0xde];
+    Latin1String srcLatin1 = cast(Latin1String)[0xa9, 0xa4, 0xa5, 0xa6, 0xa7, 0xa9, 0xc5, 0xc6, 0xf0, 0xd0, 0xde, 0xdf, 0xbf, 0xd7];
+
+    transcode(srcWin1252, dstUtf8);
+    assert(dstUtf8 == srcUtf8);
+
+    transcode(srcUtf8, dstWin1252);
+    assert(dstWin1252 == srcWin1252);
 }
 
 /*
