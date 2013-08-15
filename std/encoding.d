@@ -1996,11 +1996,28 @@ body
     }
     else
     {
+        static if(is(Dst == wchar))
+        {
+            immutable bufferLength = 2 * s.length;
+        }
+        else static if(is(Dst == char))
+        {
+            immutable bufferLength = 6 * s.length;
+        }
+        else
+        {
+            immutable bufferLength = s.length;
+        }
+
+        Dst[] buffer = new Dst[bufferLength];
+        Dst[] tmpBuffer = buffer;
         const(Src)[] t = s;
+
         while (t.length != 0)
         {
-            r ~= encode!(Dst)(decode(t));
+            EncoderInstance!(Dst).encode(decode(t), tmpBuffer);
         }
+        r = buffer[0 .. buffer.length - tmpBuffer.length].idup;
     }
 }
 
