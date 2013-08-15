@@ -2017,8 +2017,24 @@ body
         {
             EncoderInstance!(Dst).encode(decode(t), tmpBuffer);
         }
-        r = buffer[0 .. buffer.length - tmpBuffer.length].idup;
+
+        static if(is(Dst == wchar) || is(Dst == char))
+        {
+            r = buffer[0 .. buffer.length - tmpBuffer.length].idup;
+        }
+        else
+        {
+            r = cast(immutable)buffer[0 .. buffer.length - tmpBuffer.length];
+        }
     }
+}
+
+unittest
+{
+    string dst = void;
+    Windows1252String src = cast(Windows1252String)[0xe8, 0xec, 0xfd, 0xf8, 0xe9, 0xe1, 0x99, 0x83, 0x8c, 0x9c, 0xdf, 0x80, 0xc6, 0xde];
+    transcode(src, dst);
+    assert(dst == "ìèøýáéƒ™œŒ€ßÞÆ");
 }
 
 /*
